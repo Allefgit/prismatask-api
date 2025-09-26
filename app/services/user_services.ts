@@ -1,5 +1,6 @@
+import NotFoundException from '#exceptions/not_found_exception'
+import ValidationException from '#exceptions/validation_exception'
 import User from '#models/user'
-import { Exception } from '@adonisjs/core/exceptions'
 import hash from '@adonisjs/core/services/hash'
 import { DateTime } from 'luxon'
 
@@ -36,7 +37,7 @@ interface DeleteUserData {
 export default class UserServices {
   async createUser({ name, email, password, confirmPassword }: CreateUserData) {
     if (confirmPassword !== password) {
-      throw new Exception('As senhas devem ser idênticas!')
+      throw new ValidationException('A Senha e a Confirmação devem ser idênticas!')
     }
 
     const user = new User()
@@ -50,7 +51,10 @@ export default class UserServices {
   }
 
   async updateUserName({ id, name }: UpdateUserNameData) {
-    const user = await User.findByOrFail('id', id)
+    const user = await User.findBy('id', id)
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado')
+    }
 
     user.name = name
     user.updatedAt = DateTime.now()
@@ -60,11 +64,14 @@ export default class UserServices {
   }
 
   async updateUserEmail({ id, email, password }: UpdateUserEmailData) {
-    const user = await User.findByOrFail('id', id)
+    const user = await User.findBy('id', id)
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado')
+    }
 
     const isPasswordCorrect = await hash.verify(user.passwordHash!, password)
     if (!isPasswordCorrect) {
-      throw new Exception('Senha incorreta')
+      throw new ValidationException('Senha incorreta')
     }
 
     user.email = email
@@ -75,11 +82,14 @@ export default class UserServices {
   }
 
   async updateUserPassword({ id, oldPassword, newPassword }: UpdatePasswordData) {
-    const user = await User.findByOrFail('id', id)
+    const user = await User.findBy('id', id)
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado')
+    }
 
     const isPasswordCorrect = await hash.verify(user.passwordHash!, oldPassword)
     if (!isPasswordCorrect) {
-      throw new Exception('Senha incorreta')
+      throw new ValidationException('Senha incorreta')
     }
 
     user.passwordHash = await hash.make(newPassword)
@@ -90,25 +100,35 @@ export default class UserServices {
   }
 
   async deleteUser({ id, email, password }: DeleteUserData) {
-    const user = await User.findByOrFail('id', id)
+    const user = await User.findBy('id', id)
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado')
+    }
+
     const isPasswordCorrect = await hash.verify(user.passwordHash!, password)
     const isEmailCorrect = user.email === email
 
-    if (!isPasswordCorrect || !isEmailCorrect) {
-      throw new Exception('Credenciais Incorretas')
+    if (!(isPasswordCorrect || isEmailCorrect)) {
+      throw new ValidationException('Credenciais Incorretas')
     }
 
     await user.delete()
   }
 
   async getUserById(id: number) {
-    const user = await User.findByOrFail('id', id)
+    const user = await User.findBy('id', id)
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado')
+    }
 
     return user
   }
 
   async getUserByEmail(email: string) {
-    const user = await User.findByOrFail('email', email)
+    const user = await User.findBy('email', email)
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado')
+    }
 
     return user
   }

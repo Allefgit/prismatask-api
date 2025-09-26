@@ -2,7 +2,7 @@ import vine from '@vinejs/vine'
 
 export const createCategoryValidator = vine.compile(
   vine.object({
-    name: vine
+    categoryName: vine
       .string()
       .toUpperCase()
       .trim()
@@ -15,7 +15,7 @@ export const createCategoryValidator = vine.compile(
 
 export const updateCategoryBodyValidator = vine.compile(
   vine.object({
-    name: vine
+    categoryName: vine
       .string()
       .toUpperCase()
       .trim()
@@ -37,7 +37,7 @@ export const updateCategoryParamsValidator = vine.compile(
 
 export const getCategoryByNameValidator = vine.compile(
   vine.object({
-    name: vine
+    categoryName: vine
       .string()
       .toUpperCase()
       .trim()

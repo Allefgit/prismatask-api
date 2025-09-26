@@ -1,6 +1,7 @@
+import ConflictException from '#exceptions/conflict_exception'
+import NotFoundException from '#exceptions/not_found_exception'
 import User from '#models/user'
 import UserAccessibility from '#models/user_accessibility'
-import { Exception } from '@adonisjs/core/exceptions'
 import { DateTime } from 'luxon'
 
 interface UserAccessibilityData {
@@ -29,11 +30,14 @@ export default class UserAccessibilityServices {
     readingMask,
     voiceControl,
   }: UserAccessibilityData) {
-    const user = await User.findByOrFail('id', userId)
-    const isUserAccessibilityAlreadyCreated = await UserAccessibility.findBy('user_id', user.id)
+    const user = await User.findBy('id', userId)
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado')
+    }
 
+    const isUserAccessibilityAlreadyCreated = await UserAccessibility.findBy('user_id', user.id)
     if (isUserAccessibilityAlreadyCreated) {
-      throw new Exception('This user already has accessibility options')
+      throw new ConflictException('Esse usuário já possui opções de acessibilidade')
     }
 
     const userAccessibility = await UserAccessibility.create({
@@ -84,19 +88,32 @@ export default class UserAccessibilityServices {
   }
 
   async getUserAccessibilityByUserId(userId: number) {
-    const user = await User.findByOrFail('id', userId)
-    const userAccessibility = await UserAccessibility.findByOrFail('userId', user.id)
+    const user = await User.findBy('id', userId)
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado')
+    }
+    const userAccessibility = await UserAccessibility.findBy('userId', user.id)
+    if (!userAccessibility) {
+      throw new NotFoundException('Esse usuário não possui opções de acessibilidade')
+    }
 
     return userAccessibility
   }
 
   async getUserAccessibilityById(id: number) {
-    const userAccessibility = await UserAccessibility.findByOrFail('id', id)
+    const userAccessibility = await UserAccessibility.findBy('id', id)
+    if (!userAccessibility) {
+      throw new NotFoundException('Esse usuário não possui opções de acessibilidade')
+    }
+
     return userAccessibility
   }
 
   async deleteUserAccessibility(id: number) {
-    const userAccessibility = await UserAccessibility.findByOrFail('id', id)
+    const userAccessibility = await UserAccessibility.findBy('id', id)
+    if (!userAccessibility) {
+      throw new NotFoundException('Esse usuário não possui opções de acessibilidade')
+    }
 
     await userAccessibility.delete()
   }

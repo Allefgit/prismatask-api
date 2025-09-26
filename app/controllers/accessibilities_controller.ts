@@ -19,6 +19,7 @@ export default class AccessibilitiesController {
     if (!auth.user) {
       throw new Exception('Logue novamente')
     }
+
     const { id: userId } = auth.user
     const {
       contrast,

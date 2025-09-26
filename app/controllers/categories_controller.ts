@@ -16,15 +16,15 @@ export default class CategoriesController {
   }
 
   async create({ request, response }: HttpContext) {
-    const { name } = await request.validateUsing(createCategoryValidator)
+    const { categoryName: name } = await request.validateUsing(createCategoryValidator)
     const category = await this.categoryServices.createCategory({ name })
 
     return response.created(category)
   }
 
   async update({ params, request, response }: HttpContext) {
-    const { name } = await request.validateUsing(updateCategoryBodyValidator)
     const { id } = await params.validateUsing(updateCategoryParamsValidator)
+    const { categoryName: name } = await request.validateUsing(updateCategoryBodyValidator)
 
     const category = await this.categoryServices.updateCategory({ id, name })
 
@@ -41,7 +41,7 @@ export default class CategoriesController {
   }
 
   async getByName({ params, request, response }: HttpContext) {
-    const { name } = await request.validateUsing(getCategoryByNameValidator, {
+    const { categoryName: name } = await request.validateUsing(getCategoryByNameValidator, {
       data: params.name,
     })
     const category = await this.categoryServices.getByName(name)
@@ -55,6 +55,6 @@ export default class CategoriesController {
     })
     await this.categoryServices.deleteCategory(id)
 
-    return response.status(200)
+    return response.noContent()
   }
 }

@@ -14,13 +14,33 @@ export const createUserValidator = vine.compile(
 
     password: vine.string().minLength(8).trim(),
     confirmPassword: vine.string().minLength(8).trim(),
-    name: vine.string().toCamelCase(),
+    name: vine
+      .string()
+      .trim()
+      .transform((value) => {
+        return value
+          .toLowerCase()
+          .split(' ')
+          .filter((name) => name.length > 0)
+          .map((name) => name[0].toUpperCase() + name.slice(1))
+          .join(' ')
+      }),
   })
 )
 
 export const updateUserNameValidator = vine.compile(
   vine.object({
-    name: vine.string().toCamelCase(),
+    name: vine
+      .string()
+      .trim()
+      .transform((value) => {
+        return value
+          .toLowerCase()
+          .split(' ')
+          .filter((name) => name.length > 0)
+          .map((name) => name[0].toUpperCase() + name.slice(1))
+          .join(' ')
+      }),
   })
 )
 

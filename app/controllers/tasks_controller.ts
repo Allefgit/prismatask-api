@@ -6,7 +6,6 @@ import {
   updateTaskBodyValidator,
   updateTaskParamsValidator,
 } from '#validators/task'
-import { Exception } from '@adonisjs/core/exceptions'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class TasksController {
@@ -17,10 +16,7 @@ export default class TasksController {
   }
 
   async create({ request, response, auth }: HttpContext) {
-    if (!auth.user) {
-      throw new Exception('Logue novamente')
-    }
-    const { id: userId } = auth.user
+    const { id: userId } = auth.getUserOrFail()
 
     const { category, description, priority, status, targetDate, especification } =
       await request.validateUsing(createTaskValidator)
@@ -69,11 +65,7 @@ export default class TasksController {
   }
 
   async getByUserId({ auth, response }: HttpContext) {
-    if (!auth.user) {
-      throw new Exception('Logue novamente')
-    }
-
-    const { id: userId } = auth.user
+    const { id: userId } = auth.getUserOrFail()
     const task = await this.taskService.getTaskByUserId(userId)
 
     return response.ok(task)
@@ -85,6 +77,6 @@ export default class TasksController {
     })
     await this.taskService.deleteTask(id)
 
-    return response.status(200)
+    return response.noContent()
   }
 }

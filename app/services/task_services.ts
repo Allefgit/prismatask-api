@@ -2,6 +2,7 @@ import Task from '#models/task'
 import { DateTime } from 'luxon'
 import CategoryServices from './category_services.js'
 import User from '#models/user'
+import NotFoundException from '#exceptions/not_found_exception'
 
 interface CreateTaskData {
   description: string
@@ -48,6 +49,10 @@ export default class TaskServices {
     userId,
     category,
   }: CreateTaskData) {
+    if (!userId) {
+      throw new NotFoundException('Usuário não encontrado')
+    }
+
     const categoryServices = new CategoryServices()
     const { id: categoryId } = await categoryServices.verifyAndCreateCategory(category)
 
@@ -74,7 +79,10 @@ export default class TaskServices {
     targetDate,
     especification,
   }: UpdateTaskData) {
-    const task = await Task.findByOrFail('id', id)
+    const task = await Task.findBy('id', id)
+    if (!task) {
+      throw new NotFoundException('Tarefa não encontrada')
+    }
 
     if (categoryName) {
       const categoryServices = new CategoryServices()
@@ -95,17 +103,26 @@ export default class TaskServices {
   }
 
   async deleteTask(id: number) {
-    const task = await Task.findByOrFail('id', id)
+    const task = await Task.findBy('id', id)
+    if (!task) {
+      throw new NotFoundException('Tarefa não encontrada')
+    }
     task.delete()
   }
 
   async getTaskById(id: number) {
-    const task = await Task.findByOrFail('id', id)
+    const task = await Task.findBy('id', id)
+    if (!task) {
+      throw new NotFoundException('Tarefa não encontrada')
+    }
     return task
   }
 
   async getTaskByUserId(userId: number) {
-    const user = await User.findByOrFail('id', userId)
+    const user = await User.findBy('id', userId)
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado')
+    }
 
     const tasks = await Task.findManyBy('userId', user.id)
     return tasks

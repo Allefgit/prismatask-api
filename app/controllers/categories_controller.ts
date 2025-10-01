@@ -15,18 +15,20 @@ export default class CategoriesController {
     this.categoryServices = new CategoryServices()
   }
 
-  async create({ request, response }: HttpContext) {
+  async create({ request, response, auth }: HttpContext) {
+    const { id: userId } = auth.getUserOrFail()
     const { categoryName: name } = await request.validateUsing(createCategoryValidator)
-    const category = await this.categoryServices.createCategory({ name })
+    const category = await this.categoryServices.createCategory({ name, userId })
 
     return response.created(category)
   }
 
-  async update({ params, request, response }: HttpContext) {
+  async update({ params, request, response, auth }: HttpContext) {
+    const { id: userId } = auth.getUserOrFail()
     const { id } = await params.validateUsing(updateCategoryParamsValidator)
     const { categoryName: name } = await request.validateUsing(updateCategoryBodyValidator)
 
-    const category = await this.categoryServices.updateCategory({ id, name })
+    const category = await this.categoryServices.updateCategory({ id, name, userId })
 
     return response.ok(category)
   }
@@ -49,11 +51,12 @@ export default class CategoriesController {
     return response.ok(category)
   }
 
-  async delete({ params, request, response }: HttpContext) {
+  async delete({ params, request, response, auth }: HttpContext) {
+    const { id: userId } = auth.getUserOrFail()
     const { id } = await request.validateUsing(getCategoryByIdValidator, {
       data: params,
     })
-    await this.categoryServices.deleteCategory(id)
+    await this.categoryServices.deleteCategory({ id, userId })
 
     return response.noContent()
   }

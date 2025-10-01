@@ -3,6 +3,8 @@ import { DateTime } from 'luxon'
 import CategoryServices from './category_services.js'
 import User from '#models/user'
 import NotFoundException from '#exceptions/not_found_exception'
+import LogServices from './log_services.js'
+import AuditHelper from '../utilities/audit_helper.js'
 
 interface CreateTaskData {
   description: string
@@ -35,8 +37,14 @@ interface UpdateTaskData {
     | 'OVERDUE'
     | 'UNDER_REVIEW'
     | null
+  userId: number
   categoryName?: string | null
   targetDate?: Date | null
+}
+
+interface DeleteTaskData {
+  id: number
+  userId: number
 }
 
 export default class TaskServices {
@@ -54,7 +62,10 @@ export default class TaskServices {
     }
 
     const categoryServices = new CategoryServices()
-    const { id: categoryId } = await categoryServices.verifyAndCreateCategory(category)
+    const { id: categoryId } = await categoryServices.verifyAndCreateCategory({
+      userId,
+      name: category,
+    })
 
     const task = new Task()
     task.description = description
@@ -67,6 +78,14 @@ export default class TaskServices {
 
     await task.save()
 
+    const logServices = new LogServices()
+    await logServices.createLog({
+      action: 'CREATE',
+      entity: 'TASK',
+      entityId: task.id,
+      userId,
+    })
+
     return task
   }
 
@@ -78,15 +97,21 @@ export default class TaskServices {
     status,
     targetDate,
     especification,
+    userId,
   }: UpdateTaskData) {
     const task = await Task.findBy('id', id)
     if (!task) {
       throw new NotFoundException('Tarefa não encontrada')
     }
 
+    const oldTask = task.toJSON()
+
     if (categoryName) {
       const categoryServices = new CategoryServices()
-      const { id: categoryId } = await categoryServices.verifyAndCreateCategory(categoryName)
+      const { id: categoryId } = await categoryServices.verifyAndCreateCategory({
+        name: categoryName,
+        userId,
+      })
 
       task.categoryId = categoryId
     }
@@ -99,14 +124,26 @@ export default class TaskServices {
     task.updatedAt = DateTime.now()
 
     await task.save()
+
+    await AuditHelper.logChanges('TASK', task.id, userId, oldTask, task.toJSON())
+
     return task
   }
 
-  async deleteTask(id: number) {
+  async deleteTask({ id, userId }: DeleteTaskData) {
     const task = await Task.findBy('id', id)
     if (!task) {
       throw new NotFoundException('Tarefa não encontrada')
     }
+
+    const logServices = new LogServices()
+    await logServices.createLog({
+      action: 'DELETE',
+      entity: 'TASK',
+      entityId: task.id,
+      userId,
+    })
+
     task.delete()
   }
 

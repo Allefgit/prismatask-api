@@ -34,7 +34,9 @@ export default class TasksController {
     return response.created(task)
   }
 
-  async update({ params, request, response }: HttpContext) {
+  async update({ params, request, response, auth }: HttpContext) {
+    const { id: userId } = auth.getUserOrFail()
+
     const { category, description, priority, status, targetDate, especification } =
       await request.validateUsing(updateTaskBodyValidator)
 
@@ -43,6 +45,7 @@ export default class TasksController {
     })
 
     const task = await this.taskService.updateTask({
+      userId,
       id,
       categoryName: category,
       description,
@@ -71,11 +74,12 @@ export default class TasksController {
     return response.ok(task)
   }
 
-  async delete({ request, params, response }: HttpContext) {
+  async delete({ request, params, response, auth }: HttpContext) {
+    const { id: userId } = auth.getUserOrFail()
     const { id } = await request.validateUsing(deleteTaskValidator, {
       data: params,
     })
-    await this.taskService.deleteTask(id)
+    await this.taskService.deleteTask({ id, userId })
 
     return response.noContent()
   }

@@ -3,6 +3,7 @@ const AuthenticatesController = () => import('#controllers/authenticates_control
 const CategoriesController = () => import('#controllers/categories_controller')
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
+const LogsController = () => import('#controllers/logs_controller')
 const AccessibilitiesController = () => import('#controllers/accessibilities_controller')
 const TasksController = () => import('#controllers/tasks_controller')
 
@@ -52,6 +53,15 @@ router
         router.delete('/:id', [AccessibilitiesController, 'delete'])
       })
       .prefix('/userAccessibility')
+
+    router
+      .group(() => {
+        router.get('/task/:id', [LogsController, 'getByTaskId'])
+        router.get('/user/:id', [LogsController, 'getByUserId'])
+        router.get('/category/:id', [LogsController, 'getByCategoryId'])
+        router.get('/userAccessibility/:id', [LogsController, 'getByUserAccessibilityId'])
+      })
+      .prefix('/auditory')
 
     router.post('/logout', [AuthenticatesController, 'logout'])
   })

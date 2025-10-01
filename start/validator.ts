@@ -3,10 +3,10 @@ import vine, { SimpleMessagesProvider } from '@vinejs/vine'
 vine.messagesProvider = new SimpleMessagesProvider(
   {
     'required': 'O campo {{ field }} é obrigatório',
-    'exists': 'O campo {{field}} já está vinculado em outro registro',
+    'exists': 'O campo {{field}} não possui registro',
     'unique': 'O campo {{field}} já está vinculado em outro registro',
 
-    'database.exists': 'O campo {{field}} já está vinculado em outro registro',
+    'database.exists': 'O campo {{field}} não possui registro',
     'database.unique': 'O campo {{field}} já está vinculado em outro registro',
 
     'string': 'O valor de {{ field }} precisa ser do tipo caractere',

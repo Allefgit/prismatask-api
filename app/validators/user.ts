@@ -74,7 +74,7 @@ export const deleteUserValidator = vine.compile(
       .email()
       .toLowerCase()
       .trim()
-      .unique(async (db, value) => {
+      .exists(async (db, value) => {
         const user = await db.from('users').where('email', value).first()
         return !!user
       }),
@@ -99,7 +99,7 @@ export const getUserByEmailValidator = vine.compile(
       .email()
       .toLowerCase()
       .trim()
-      .unique(async (db, value) => {
+      .exists(async (db, value) => {
         const user = await db.from('users').where('email', value).first()
         return !!user
       }),

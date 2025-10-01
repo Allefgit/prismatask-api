@@ -4,6 +4,7 @@ import ValidationException from '#exceptions/validation_exception'
 import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
 import { LoginTicket, OAuth2Client } from 'google-auth-library'
+import LogServices from './log_services.js'
 
 interface LoginData {
   email: string
@@ -44,6 +45,15 @@ export default class AuthServices {
     })
 
     let user = await returnUserByTicket(ticket)
+
+    const logServices = new LogServices()
+
+    await logServices.createLog({
+      action: 'LOGIN',
+      entity: 'USER',
+      entityId: user.id,
+      userId: user.id,
+    })
     return user
   }
 
@@ -59,6 +69,15 @@ export default class AuthServices {
     if (!(isCorrectPassword || isCorrectEmail)) {
       throw new ValidationException('Credenciais inválidas!')
     }
+
+    const logServices = new LogServices()
+
+    await logServices.createLog({
+      action: 'LOGIN',
+      entity: 'USER',
+      entityId: user.id,
+      userId: user.id,
+    })
 
     return user
   }

@@ -3,6 +3,8 @@ import NotFoundException from '#exceptions/not_found_exception'
 import User from '#models/user'
 import UserAccessibility from '#models/user_accessibility'
 import { DateTime } from 'luxon'
+import AuditHelper from '../utilities/audit_helper.js'
+import LogServices from './log_services.js'
 
 interface UserAccessibilityData {
   userId: number
@@ -15,6 +17,11 @@ interface UserAccessibilityData {
   cursorEnlarged?: boolean | null
   voiceControl?: boolean | null
   punds?: boolean | null
+}
+
+interface DeleteAccessibilityData {
+  id: number
+  userId: number
 }
 
 export default class UserAccessibilityServices {
@@ -53,6 +60,14 @@ export default class UserAccessibilityServices {
       voice_control: voiceControl ?? null,
     })
 
+    const logServices = new LogServices()
+    await logServices.createLog({
+      action: 'CREATE',
+      entity: 'USER_ACCESSIBILITY',
+      entityId: userAccessibility.id!,
+      userId,
+    })
+
     return userAccessibility
   }
 
@@ -71,6 +86,8 @@ export default class UserAccessibilityServices {
     const user = await User.findByOrFail('id', userId)
     const userAccessibility = await UserAccessibility.findByOrFail('user_id', user.id)
 
+    const oldTask = userAccessibility.toJSON()
+
     userAccessibility.userId = user.id
     userAccessibility.contrast = contrast ?? null
     userAccessibility.cursor_enlarged = cursorEnlarged ?? null
@@ -84,6 +101,15 @@ export default class UserAccessibilityServices {
     userAccessibility.updatedAt = DateTime.now()
 
     await userAccessibility.save()
+
+    await AuditHelper.logChanges(
+      'USER_ACCESSIBILITY',
+      userAccessibility.id!,
+      userId,
+      oldTask,
+      userAccessibility.toJSON()
+    )
+
     return userAccessibility
   }
 
@@ -109,11 +135,19 @@ export default class UserAccessibilityServices {
     return userAccessibility
   }
 
-  async deleteUserAccessibility(id: number) {
+  async deleteUserAccessibility({ id, userId }: DeleteAccessibilityData) {
     const userAccessibility = await UserAccessibility.findBy('id', id)
     if (!userAccessibility) {
       throw new NotFoundException('Esse usuário não possui opções de acessibilidade')
     }
+
+    const logServices = new LogServices()
+    await logServices.createLog({
+      action: 'DELETE',
+      entity: 'USER_ACCESSIBILITY',
+      entityId: id,
+      userId,
+    })
 
     await userAccessibility.delete()
   }

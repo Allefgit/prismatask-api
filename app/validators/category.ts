@@ -19,7 +19,7 @@ export const updateCategoryBodyValidator = vine.compile(
       .string()
       .toUpperCase()
       .trim()
-      .exists(async (db, value) => {
+      .unique(async (db, value) => {
         const category = await db.from('categories').where('name', value).first()
         return !category
       }),

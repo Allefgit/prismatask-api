@@ -51,7 +51,7 @@ export const deleteUserAccessibilityValidator = vine.compile(
     id: vine.number().exists(async (db, value) => {
       const userAccessibility = await db.from('user_accessibilities').where('id', value).first()
 
-      return userAccessibility
+      return !!userAccessibility
     }),
   })
 )

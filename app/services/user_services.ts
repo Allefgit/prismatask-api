@@ -3,6 +3,7 @@ import ValidationException from '#exceptions/validation_exception'
 import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
 import { DateTime } from 'luxon'
+import LogServices from './log_services.js'
 
 interface CreateUserData {
   email: string
@@ -47,6 +48,15 @@ export default class UserServices {
     user.passwordHash = await hash.make(password)
 
     await user.save()
+
+    const logServices = new LogServices()
+    await logServices.createLog({
+      action: 'CREATE',
+      entity: 'USER',
+      entityId: user.id,
+      userId: user.id,
+    })
+
     return user
   }
 
@@ -56,10 +66,23 @@ export default class UserServices {
       throw new NotFoundException('Usuário não encontrado')
     }
 
+    const oldValue = user.name
+
     user.name = name
     user.updatedAt = DateTime.now()
 
     user.save()
+    const logServices = new LogServices()
+    await logServices.createLog({
+      action: 'UPDATE',
+      entity: 'USER',
+      entityId: user.id,
+      userId: user.id,
+      field: 'NAME',
+      oldValue,
+      newValue: name,
+    })
+
     return user
   }
 
@@ -74,10 +97,23 @@ export default class UserServices {
       throw new ValidationException('Senha incorreta')
     }
 
+    const oldValue = user.email
     user.email = email
 
     user.save()
     user.updatedAt = DateTime.now()
+
+    const logServices = new LogServices()
+    await logServices.createLog({
+      action: 'UPDATE',
+      entity: 'USER',
+      entityId: user.id,
+      userId: user.id,
+      field: 'EMAIL',
+      oldValue,
+      newValue: email,
+    })
+
     return user
   }
 
@@ -96,6 +132,15 @@ export default class UserServices {
     user.updatedAt = DateTime.now()
     user.save()
 
+    const logServices = new LogServices()
+    await logServices.createLog({
+      action: 'UPDATE',
+      entity: 'USER',
+      entityId: user.id,
+      userId: user.id,
+      field: 'PASSWORD',
+    })
+
     return user
   }
 
@@ -111,6 +156,14 @@ export default class UserServices {
     if (!(isPasswordCorrect || isEmailCorrect)) {
       throw new ValidationException('Credenciais Incorretas')
     }
+
+    const logServices = new LogServices()
+    await logServices.createLog({
+      action: 'DELETE',
+      entity: 'USER',
+      entityId: user.id,
+      userId: user.id,
+    })
 
     await user.delete()
   }

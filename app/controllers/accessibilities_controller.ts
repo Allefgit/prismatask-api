@@ -103,11 +103,12 @@ export default class AccessibilitiesController {
     return response.ok(userAccessibility)
   }
 
-  async delete({ request, params, response }: HttpContext) {
+  async delete({ request, params, response, auth }: HttpContext) {
+    const { id: userId } = auth.getUserOrFail()
     const { id } = await request.validateUsing(deleteUserAccessibilityValidator, {
       data: params,
     })
-    await this.userAccessibilityServices.deleteUserAccessibility(id)
+    await this.userAccessibilityServices.deleteUserAccessibility({ id, userId })
 
     return response.status(200)
   }

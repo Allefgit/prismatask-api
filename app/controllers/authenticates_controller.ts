@@ -1,7 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
 import AuthServices from '#services/auth_services'
-import { loginWithEmailValidator, loginWithGoogleValidator } from '#validators/auth'
+import { loginWithEmailValidator, loginWithGoogleValidator } from '#validators/auth_validator'
 
 export default class AuthenticatesController {
   private readonly authServices = new AuthServices()

@@ -5,7 +5,7 @@ import {
   getTaskByIdValidator,
   updateTaskBodyValidator,
   updateTaskParamsValidator,
-} from '#validators/task'
+} from '#validators/task_validator'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class TasksController {

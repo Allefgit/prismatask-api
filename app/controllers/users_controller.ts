@@ -6,7 +6,7 @@ import {
   updateUserEmailValidator,
   updateUserNameValidator,
   updateUserPasswordValidator,
-} from '#validators/user'
+} from '#validators/user_validator'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class UsersController {

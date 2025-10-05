@@ -15,10 +15,10 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 async function returnUserByTicket(ticket: LoginTicket) {
   const payload = ticket.getPayload()
-  if (!payload) throw new UnAuthorizedException('Token do Google inválido!')
+  if (!payload) throw new UnAuthorizedException('Token do Google inválido')
 
   const { sub: googleId, email, name } = payload
-  if (!email) throw new NotFoundException('E-mail não fornecido pelo Google!')
+  if (!email) throw new NotFoundException('E-mail não fornecido pelo Google')
 
   let user = await User.findBy('email', email)
   if (!user) {
@@ -64,21 +64,10 @@ export default class AuthServices {
     }
 
     const isCorrectPassword = await hash.verify(user.passwordHash!, password)
-    const isCorrectEmail = email === user.email
 
-    if (!(isCorrectPassword || isCorrectEmail)) {
-      throw new ValidationException('Credenciais inválidas!')
+    if (!isCorrectPassword) {
+      throw new ValidationException('Credenciais inválidas')
     }
-
-    const logServices = new LogServices()
-
-    await logServices.createLog({
-      action: 'LOGIN',
-      entity: 'USER',
-      entityId: user.id,
-      userId: user.id,
-    })
-
     return user
   }
 }

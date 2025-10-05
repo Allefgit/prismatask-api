@@ -83,8 +83,15 @@ export default class UserAccessibilityServices {
     readingMask,
     voiceControl,
   }: UserAccessibilityData) {
-    const user = await User.findByOrFail('id', userId)
-    const userAccessibility = await UserAccessibility.findByOrFail('user_id', user.id)
+    const user = await User.findBy('id', userId)
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado')
+    }
+
+    const userAccessibility = await UserAccessibility.findBy('user_id', user.id)
+    if (!userAccessibility) {
+      throw new NotFoundException('O usuário não possui configurações de acessibilidade')
+    }
 
     const oldTask = userAccessibility.toJSON()
 

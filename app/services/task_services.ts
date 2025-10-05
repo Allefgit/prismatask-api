@@ -57,7 +57,8 @@ export default class TaskServices {
     userId,
     category,
   }: CreateTaskData) {
-    if (!userId) {
+    const user = await User.findBy('id', userId)
+    if (!user) {
       throw new NotFoundException('Usuário não encontrado')
     }
 

@@ -153,7 +153,7 @@ export default class UserServices {
     const isPasswordCorrect = await hash.verify(user.passwordHash!, password)
     const isEmailCorrect = user.email === email
 
-    if (!(isPasswordCorrect || isEmailCorrect)) {
+    if (!isPasswordCorrect || !isEmailCorrect) {
       throw new ValidationException('Credenciais Incorretas')
     }
 

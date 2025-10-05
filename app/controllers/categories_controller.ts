@@ -5,7 +5,7 @@ import {
   getCategoryByNameValidator,
   updateCategoryBodyValidator,
   updateCategoryParamsValidator,
-} from '#validators/category'
+} from '#validators/category_validator'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class CategoriesController {

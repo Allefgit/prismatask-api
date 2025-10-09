@@ -4,7 +4,6 @@ import {
   getCategoryByIdValidator,
   getCategoryByNameValidator,
   updateCategoryBodyValidator,
-  updateCategoryParamsValidator,
 } from '#validators/category_validator'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -25,7 +24,10 @@ export default class CategoriesController {
 
   async update({ params, request, response, auth }: HttpContext) {
     const { id: userId } = auth.getUserOrFail()
-    const { id } = await params.validateUsing(updateCategoryParamsValidator)
+
+    const { id } = await request.validateUsing(getCategoryByIdValidator, {
+      data: params,
+    })
     const { categoryName: name } = await request.validateUsing(updateCategoryBodyValidator)
 
     const category = await this.categoryServices.updateCategory({ id, name, userId })

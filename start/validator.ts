@@ -12,7 +12,7 @@ vine.messagesProvider = new SimpleMessagesProvider(
     'string': 'O valor de {{ field }} precisa ser do tipo caractere',
     'number': 'O valor de {{ field }} precisa ser um número',
     'email': 'O valor não é um email válido',
-    'minLength': 'O campo "{{ field }}" deve ter no mínimo {{ min }} caracteres',
+    'minLength': 'O campo {{ field }} deve ter no mínimo {{ min }} caracteres',
 
     'userId.required': 'O identificador do usuário deve ser informado',
     'id.required': 'O identificador deve ser informado',

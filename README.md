@@ -93,10 +93,8 @@ A aplicação passou por uma série de melhorias estruturais e técnicas que gar
 - **Tratamento customizado de erros**, com mensagens amigáveis e padronizadas para o cliente.  
 - **Testes unitários** implementados para garantir o funcionamento isolado das regras de negócio.  
 - **Testes de integração** cobrindo as principais rotas da aplicação, validando o comportamento entre os módulos.  
-- **Ambiente de testes dedicado**, com banco de dados isolado e configuração automatizada.  
 - **Padrão de arquitetura MVC**, garantindo organização e escalabilidade.  
 - **Suporte a acessibilidade**, incluindo opções de contraste, tamanho de fonte e recursos de leitura assistiva.  
-- **Documentação e versionamento completos**, com todas as etapas do projeto descritas no repositório.  
 
 ---
 

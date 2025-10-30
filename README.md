@@ -74,23 +74,36 @@ O PrismaTask busca oferecer uma plataforma de gerenciamento de tarefas robusta, 
    ```bash
    npm run dev
 
-## 📌 Status do Projeto
+# 🟢 **Status do Projeto: Concluído**
 
-### ✅ Concluído até o momento:
-- **Models** criados para representar as entidades principais
-- **Migrations** para criação e manutenção das tabelas no banco de dados
-- **Controllers** implementados para cada recurso
-- **Services** para centralizar as regras de negócio
-- **Validators** para garantir a integridade dos dados
-- **Rotas** de CRUD de **Usuários**, **Tarefas**, **Categorias** e **Acessibilidade**
-- **Autenticação de usuários** (Login, Logout, Google Auth)
-- **Middleware de autenticação** para proteger rotas privadas
+O projeto encontra-se **100% funcional e estável**, com todas as funcionalidades planejadas implementadas e testadas.  
+A aplicação passou por uma série de melhorias estruturais e técnicas que garantem **qualidade, confiabilidade e manutenibilidade do código**.  
 
-### 🚧 Futuras implementações:
-- Sistema centralizado de **tratamento de erros**
-- **Testes automatizados**
-- Implementação de **LOGs** para auditoria de ações
-- Deploy em ambiente cloud 
+## ✅ **Principais Implementações**
+
+- **Models** criados para representar as entidades principais (**Usuários**, **Tarefas**, **Categorias**, **Acessibilidade** e **Logs**).  
+- **Migrations** para criação e manutenção das tabelas no banco de dados.  
+- **Controllers** implementados para cada recurso, organizando as requisições de forma clara e padronizada.  
+- **Services** para centralizar as regras de negócio e facilitar a manutenção do código.  
+- **Validators** para garantir a integridade e consistência dos dados enviados à API.  
+- **Rotas CRUD completas** para **Usuários**, **Tarefas**, **Categorias** e **Acessibilidade**, seguindo boas práticas REST.  
+- **Autenticação de usuários** com suporte a **Login tradicional**, **Logout** e **Login com Google (OAuth)**.  
+- **Middleware de autenticação** para proteger rotas privadas e gerenciar o acesso via **Bearer Token**.  
+- **Auditoria completa (Logs)**, registrando todas as ações críticas do sistema — como criação, atualização, exclusão e login de usuários — com detalhamento por entidade, ação, usuário e data.  
+- **Tratamento customizado de erros**, com mensagens amigáveis e padronizadas para o cliente.  
+- **Testes unitários** implementados para garantir o funcionamento isolado das regras de negócio.  
+- **Testes de integração** cobrindo as principais rotas da aplicação, validando o comportamento entre os módulos.  
+- **Ambiente de testes dedicado**, com banco de dados isolado e configuração automatizada.  
+- **Padrão de arquitetura MVC**, garantindo organização e escalabilidade.  
+- **Suporte a acessibilidade**, incluindo opções de contraste, tamanho de fonte e recursos de leitura assistiva.  
+- **Documentação e versionamento completos**, com todas as etapas do projeto descritas no repositório.  
+
+---
+
+## 🚀 **Situação Atual**
+
+O sistema está **pronto para implantação** e preparado para futuras **melhorias e expansões**, mantendo uma base sólida para evolução contínua.  
+A arquitetura modular, os testes automatizados e a auditoria completa garantem **segurança, estabilidade e escalabilidade** da aplicação.  
 
 ## 📜 Licença
 
